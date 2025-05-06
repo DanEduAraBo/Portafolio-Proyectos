@@ -2,21 +2,21 @@
 
 Este proyecto explora el potencial del aprendizaje profundo aplicado al procesamiento de imágenes utilizando la base de datos **Fashion-MNIST**. Se desarrollaron dos enfoques complementarios: una **Red Neuronal Convolucional (CNN)** para clasificar prendas, y dos tipos de **Redes Generativas Antagónicas (GAN y DCGAN)** para generar imágenes sintéticas de ropa.
 
-## 🎯 Objetivo
+## Objetivo
 
 - Clasificar imágenes de prendas de vestir mediante CNN.
 - Generar nuevas imágenes realistas con GAN y DCGAN.
 - Evaluar precisión, pérdida y calidad visual de los modelos.
 
-## 📦 Dataset
+## Dataset
 
 - **Fuente:** Fashion-MNIST (70,000 imágenes en escala de grises, 28x28 px)
 - **Categorías:** camiseta, pantalón, sudadera, vestido, abrigo, sandalia, camisa, tenis, bolsa, botín
 - **Distribución:** 60,000 entrenamiento / 10,000 prueba
 
-## 🧠 Modelos Implementados
+## Modelos Implementados
 
-### 🔹 Red Neuronal Convolucional (CNN)
+### Red Neuronal Convolucional (CNN)
 
 - 3 capas convolucionales (32, 64, 128 filtros)
 - MaxPooling, Dropout (25%-50%), Flatten, 2 capas densas (256 y 128 neuronas)
@@ -26,7 +26,7 @@ Este proyecto explora el potencial del aprendizaje profundo aplicado al procesam
   - Entrenamiento: 0.9299
   - Prueba: 0.9194
 
-### 🔸 Red Generativa Antagónica (GAN)
+### Red Generativa Antagónica (GAN)
 
 - **Generador:** capas densas con BatchNorm y LeakyReLU
 - **Discriminador:** capas densas con Dropout y Sigmoid
@@ -34,7 +34,7 @@ Este proyecto explora el potencial del aprendizaje profundo aplicado al procesam
 - Imágenes generadas con formas generales de prendas
 - **Resultado:** Imágenes borrosas pero con estructura reconocible
 
-### 🔸 Deep Convolutional GAN (DCGAN)
+### Deep Convolutional GAN (DCGAN)
 
 - **Generador:** 2 capas de convolución transpuesta con BatchNorm
 - **Discriminador:** 2 capas convolucionales + Dense + Dropout
@@ -44,7 +44,7 @@ Este proyecto explora el potencial del aprendizaje profundo aplicado al procesam
   - GAN simple: ~31 minutos
   - DCGAN: ~87 minutos
 
-## 📊 Resultados y Comparaciones
+## Resultados y Comparaciones
 
 | Modelo     | Precisión/Realismo | Tiempo entrenamiento | Complejidad |
 |------------|--------------------|----------------------|-------------|
@@ -56,28 +56,29 @@ Este proyecto explora el potencial del aprendizaje profundo aplicado al procesam
 - DCGAN mostró imágenes más realistas que GAN simple.
 - GANs requieren más recursos y tiempo, pero son útiles para generación de datos sintéticos.
 
-## 🛠️ Tecnologías
+## Tecnologías
 
 - Python 3.10, TensorFlow/Keras, Matplotlib, NumPy
 - Entrenamiento en Google Colab con GPU
 
 
-## 👥 Equipo
+## Equipo
 
 - Daniel Eduardo Arana Bodart  
 - Isis Yaneth Malfavón Díaz  
 - Alejandro Adriaensens Martínez  
 - Karla Sofía Cantú Zendejas  
 
-## 🧑‍🏫 Profesor
+## Profesor
 
 - Dr. Santiago Enrique Conant Pablos
 
-## 🏫 Curso
+## Curso
 
 Diseño de Redes Neuronales y Aprendizaje Profundo  
 Tecnológico de Monterrey 
-📅 Septiembre 2024
+
+Septiembre 2024
 
 ---
 
