@@ -42,7 +42,7 @@ Aunque la hipótesis de segmentos topológicamente diferenciables fue rechazada,
 ## ✍️ Autor
 
 Daniel Eduardo Arana Bodart  
-Abril 2025
+Mayo 2025
 
 ---
 
