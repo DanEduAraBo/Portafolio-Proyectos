@@ -31,7 +31,7 @@ Aunque la hipótesis de segmentos topológicamente diferenciables fue rechazada,
 
 ## 🗂️ Recursos
 
-- 📄 [Reporte en PDF](https://drive.google.com/drive/folders/18y8eEKzNlYgTUEgfbORL4XxV4MVaJBHO)
+- 📄 [Repositorio del proyecto (DRIVE)](https://drive.google.com/drive/folders/18y8eEKzNlYgTUEgfbORL4XxV4MVaJBHO)
 - 📊 Dataset original: [Kaggle - Analyzing Credit Card Spending Habits in India](https://www.kaggle.com/datasets/thedevastator/analyzing-credit-card-spending-habits-in-india)
 
 ## 🛠️ Herramientas utilizadas
