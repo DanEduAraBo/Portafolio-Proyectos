@@ -50,8 +50,8 @@ Evaluar si variables como **temperatura, humedad, presión atmosférica y veloci
 
 Sí, los **factores no antropogénicos tienen un impacto significativo** en los niveles de contaminación, especialmente en el Ozono. Aunque no explican completamente el fenómeno, permiten generar modelos predictivos precisos. La red neuronal con solo factores naturales superó incluso a modelos que incluían contaminantes como predictores.
 
-## 📁 Estructura del repositorio
-
+## 📁 Recursos
+- 📄 [Repositorio del proyecto (DRIVE)](https://drive.google.com/drive/folders/1n8xeJCoJLUbla0iFVKPEUHZIQIs49O5u?usp=sharing)
 
 ## 👥 Equipo
 
