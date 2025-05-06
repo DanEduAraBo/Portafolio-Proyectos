@@ -1,6 +1,6 @@
 # 📊 Portafolio de Proyectos de Ciencia de Datos e Inteligencia Artificial
 
-Bienvenido a mi repositorio de proyectos desarrollados como parte de mi formación en **Ciencia de Datos e Inteligencia Artificial**. Este portafolio reúne experiencias prácticas aplicadas a datos reales y simulados, abarcando desde modelos estadísticos clásicos hasta arquitecturas avanzadas de aprendizaje profundo. Cada proyecto aborda una problemática específica con una metodología rigurosa, buscando obtener insights significativos o construir soluciones predictivas de valor social, clínico o tecnológico.
+Bienvenidos a mi repositorio de proyectos desarrollados como parte de mi formación en **Ciencia de Datos e Inteligencia Artificial**. Este portafolio reúne experiencias prácticas aplicadas a datos reales y simulados, abarcando desde modelos estadísticos clásicos hasta arquitecturas avanzadas de aprendizaje profundo. Cada proyecto aborda una problemática específica con una metodología rigurosa, buscando obtener insights significativos o construir soluciones predictivas de valor social, clínico o tecnológico.
 
 ## 🚀 Proyectos destacados
 
