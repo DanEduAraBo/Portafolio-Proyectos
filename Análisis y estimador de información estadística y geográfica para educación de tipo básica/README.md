@@ -2,11 +2,11 @@
 
 Este proyecto, desarrollado en colaboración con el **INEGI**, busca predecir el número de niños de entre 0 y 5 años por manzana en tres estados de México: **Coahuila, Querétaro y Tabasco**. A partir de datos censales del INEGI, se construyeron modelos de regresión que permitan informar decisiones estratégicas como la ubicación óptima de escuelas preescolares.
 
-## 🧭 Objetivo
+## Objetivo
 
 Identificar patrones sociodemográficos que permitan predecir de manera precisa la población infantil en una manzana geográfica determinada, utilizando técnicas de **regresión supervisada** y visualización geoespacial.
 
-## 🧩 Datos
+## Datos
 
 Los datos fueron extraídos del Censo 2020 y el DENUE (Directorio Estadístico Nacional de Unidades Económicas). Las variables consideradas incluyen:
 
@@ -21,26 +21,26 @@ Los datos fueron extraídos del Censo 2020 y el DENUE (Directorio Estadístico N
 
 La **variable objetivo** es la población de niños de 0 a 5 años (`P_0A5`).
 
-## 🔎 Exploración y Transformación
+## Exploración y Transformación
 
 - Análisis exploratorio por estado (Tabasco, Querétaro, Coahuila)
 - Limpieza de datos y manejo de valores censurados
 - Transformación logarítmica para reducir sesgo y atípicos
 - Cálculo de correlaciones y visualizaciones estadísticas
 
-## 🧠 Modelado
+## Modelado
 
 Se aplicaron varios modelos de regresión:
 
-- 🔹 Regresión Lineal
-- 🔹 Árboles de Decisión
-- 🔹 Lasso
-- 🔹 Ridge
-- 🔹 **Random Forest (modelo seleccionado)**
+- Regresión Lineal
+- Árboles de Decisión
+- Lasso
+- Ridge
+- **Random Forest (modelo seleccionado)**
 
 La evaluación de los modelos se hizo mediante métricas como **R²** y **MSE**, y se aplicó **validación cruzada** con `GridSearchCV`.
 
-## 🌎 Visualización
+## Visualización
 
 Se desarrollaron mapas comparativos con **GeoPandas** para mostrar:
 - La distribución real de la población infantil
@@ -48,13 +48,13 @@ Se desarrollaron mapas comparativos con **GeoPandas** para mostrar:
 
 Esto permite identificar regiones con carencia de infraestructura educativa.
 
-## ✅ Resultados
+## Resultados
 
 - El modelo **Random Forest** obtuvo el mejor rendimiento en los tres estados, alcanzando valores de R² de hasta **0.89**.
 - Las zonas identificadas como prioritarias para intervención educativa coinciden con regiones de baja cobertura escolar.
 - El proyecto tiene viabilidad de implementación real con valor social inmediato.
 
-## 🤝 Equipo
+## Equipo
 
 - Daniel Eduardo Arana Bodart
 - Isis Yaneth Malfavón Díaz
@@ -66,7 +66,7 @@ Esto permite identificar regiones con carencia de infraestructura educativa.
 
 Colaboración con **INEGI**, bajo la guía del profesor **Felipe Castillo Rendón** y **Luis Daniel Mendoza Morales**.
 
-## 📌 Fecha
+## Fecha
 
 **Mayo 2024**
 
