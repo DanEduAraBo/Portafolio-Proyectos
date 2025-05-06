@@ -61,7 +61,7 @@ Soy **Daniel Eduardo Arana Bodart**, Ingeniero en Ciencia de Datos y Matemática
 - Visualización e interpretación de modelos complejos
 - Aprendizaje automático robusto y explicable
 
-## 📝 Contacto
+## Contacto
 
-📧 **Correo:** [danyarabo@gmail.com]  
-🔗 **LinkedIn:** [www.linkedin.com/in/aranabodartdaniel]  
+**Correo:** [danyarabo@gmail.com]  
+**LinkedIn:** [www.linkedin.com/in/aranabodartdaniel]  
