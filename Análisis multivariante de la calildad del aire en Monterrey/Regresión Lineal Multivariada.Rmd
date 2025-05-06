@@ -1,0 +1,317 @@
+---
+title: "Reto Etapa 3"
+author: "Daniel Eduardo Arana Bodart"
+date: "`r Sys.Date()`"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Proceso anterior
+```{r}
+datos=read.csv('datos_Norte_no_norm.csv')
+datos
+```
+```{r}
+library(car)
+datos_t = datos # Copia del dataframe
+
+for (col_name in names(datos)){
+  
+  yj = powerTransform(datos[col_name], family = "yjPower")
+  l4 = yj$lambda # Calcular lambda
+    
+  for (i in 1:nrow(datos)){   # Condiciones de la transformación
+    x = datos[i,col_name]
+    
+    if (x >= 0 & l4 != 0){
+      datos_t[i,col_name] = ((x+1)^l4-1)/l4
+    }
+    else if (x >= 0 & l4 == 0){
+      datos_t[i,col_name]  = log(x+1)
+    }
+    if (x < 0 & l4 != 2){
+      datos_t[i,col_name]  = ((-x+1)^(2-x)-1)/2-x
+    }
+    else if (x < 0 & l4 == 0){
+      datos_t[i,col_name]  = -log(x+1)
+    }
+    
+  }
+  
+}
+
+
+```
+
+```{r}
+for (col_name in names(datos)){ 
+  
+  # Comprobar normalidades
+  
+  par(mfrow=c(2,1),mar=c(1, 2, 1, 2))
+  qqnorm(datos[[col_name]],main = paste("QQPlot Norte Original -", col_name))
+  qqline(datos[[col_name]],col='red')
+  qqnorm(datos_t[[col_name]], main= paste ("QQPlot Norte Transformado -", col_name))
+  qqline(datos_t[[col_name]],col='red')
+}
+```
+Se observa que hay variables que puede que sean transformadas a normales, como lo son las variables CO, PM10 o WSR, pero en su mayoría son no normales.
+
+# Best Normalize
+```{r}
+library(bestNormalize)
+
+# Crear una lista para almacenar los resultados de cada variable
+transformations = list()
+
+datos_t2 = datos # Copia del dataframe
+
+for (col_name in names(datos)) {
+  
+  # Aplica la mejor normalización a la columna actual
+  results = bestNormalize(datos[[col_name]])
+  
+  # Guarda la transformación aplicada en la lista
+  transformations[[col_name]] = results
+  
+  # Guarda la columna transformada en datos_t2
+  datos_t2[[col_name]] = results$x.t
+  
+  # Imprime el tipo de transformación aplicada
+  cat("Variable:", col_name, "- Transformación aplicada:", class(results$chosen_transform)[1], "\n")
+}
+```
+
+```{r}
+results
+```
+
+
+```{r}
+for (col_name in names(datos)){ 
+  
+  # Comprobar normalidades
+  
+  par(mfrow=c(2,1),mar=c(1, 2, 1, 2))
+  qqnorm(datos[[col_name]],main = paste("QQPlot Norte Original -", col_name))
+  qqline(datos[[col_name]],col='red')
+  qqnorm(datos_t2[[col_name]], main= paste ("QQPlot Norte Transformación Best Normalize -", col_name))
+  qqline(datos_t2[[col_name]],col='red')
+}
+```
+Aquí se puede observar como sorprendentemente todas las variables, exceptuando SR y WDV siguen la linea del QQPlot casi a la perfección, dando a entender que todas las variables fueron satisfactoriamente transformadas a una distribución normal; sin embargo, para más seguridad se realizaron pruebas estadísticas.
+
+```{r}
+library(nortest)
+for (col_name in names(datos_t2)){
+  print(col_name)
+  pruebas <- ad.test(datos_t2[,col_name])
+  print(pruebas)
+}
+```
+En donde se demuestra que casi todas las variables dependientes de nuestros modelos no son normales; sin embargo, todas las variables predictoras exceptuando SR y WDV no tienen evidencia estadística para concluir lo contrario.
+
+# Modelo
+Se eliminan las variables predictoras no normales.
+```{r}
+datos_t3 <- subset(datos_t2, select = -c(SR, WDV))
+```
+
+
+Se empieza declarando las variables dependientes.
+```{r}
+Y1 <- datos_t3$CO 
+Y2 <- datos_t3$NO
+Y3 <- datos_t3$NO2
+Y4 <- datos_t3$NOX
+Y5 <- datos_t3$O3
+Y6 <- datos_t3$PM10
+Y7 <- datos_t3$PM2.5
+Y8 <- datos_t3$SO2
+```
+
+Se declaran también las variables independientes.
+```{r}
+X1 <- datos_t3$TOUT # Temperatura
+X2 <- datos_t3$RH # Humedad Relativa
+X3 <- datos_t3$PRS # Presión Atmosférica
+X4 <- datos_t3$WSR # Velocidad del Viento
+```
+
+Ajuste de modelo multivariado
+```{r}
+fit <- lm(cbind(Y1, Y2, Y3, Y4, Y5, Y6, Y7, Y8) ~ X1 + X2 + X3 + X4, data = datos_t3)
+summary(fit)
+```
+De este resumen se pueden obtener los modelos con sus respectivos valores de Beta. Se muestran a continuación:
+
+CO = 0.2135X1 + 0.0508X2 - 0.1717X3 - 0.4419X4
+NO = 0.0006 - 0.1234X1 + 0.0726X2 - 0.0336X3 - 0.4011X4
+NO2 = -0.1588X1 -0.1811X2 - 0.1410X3 - 0.5031X4
+NOX = -0.2013X1 + 0.0127X2 - 0.1422X3 -0.5176X4
+03 = 0.0012 + 0.4820X1 -0.2154X2 + 0.1695X3 + 0.3245X4
+PM10 = -0.0414X1 - 0.2882X2 - 0.24X3 - 0.2747X4
+PM2.5 = 0.0007 - 0.0448X1 - 0.0973X2 - 0.3265X3 - 0.3146X4
+SO2 = 0.0002 + 0.1641X1 + 0.1374X2 - 0.0261X3 + 0.0346X4
+
+Donde:
+X1 = Temperatura
+X2 = Humedad Relativa
+X3 = Presión Atmosférica
+X4 = Velocidad del Viento
+
+# Validación del modelo
+
+Pruebas de hipótesis multivariadas (MANOVA)
+```{r}
+manova_result <- Anova(fit, type = "III")
+summary(manova_result)
+```
+Prueba de si las variables independientes afectan en conjunto a las dependientes (MANOVA)
+```{r}
+summary(manova(fit), test = "Wilks")
+```
+
+Esta última tabla dice un resumen del Manova completo, en donde se tiene evidencia estadística para sugerir que las variables independientes(Xn) tienen un efecto significativo en conjunto sobre las variables dependientes (Yn). En este caso, entre menor sea el valor de la Lambda de Wilks indica mayor efecto significativo para las variables dependientes.
+
+Análisis de residuos
+```{r}
+residuals_multivariate <- residuals(fit)
+```
+
+```{r}
+# Gráficas de los residuos de cada variable dependiente
+par(mfrow = c(2, 2))
+plot(fit$residuals[,1], main = "Residuos Y1", ylab = "Residuos", xlab = "Índice")
+plot(fit$residuals[,2], main = "Residuos Y2", ylab = "Residuos", xlab = "Índice")
+plot(fit$residuals[,3], main = "Residuos Y3", ylab = "Residuos", xlab = "Índice")
+plot(fit$residuals[,4], main = "Residuos Y4", ylab = "Residuos", xlab = "Índice")
+par(mfrow = c(2, 2))
+plot(fit$residuals[,5], main = "Residuos Y5", ylab = "Residuos", xlab = "Índice")
+plot(fit$residuals[,6], main = "Residuos Y6", ylab = "Residuos", xlab = "Índice")
+plot(fit$residuals[,7], main = "Residuos Y7", ylab = "Residuos", xlab = "Índice")
+plot(fit$residuals[,8], main = "Residuos Y8", ylab = "Residuos", xlab = "Índice")
+```
+
+Es un tanto complicado interpretar estos ocho gráficos debido a la gran cantidad de datos que tiene cada una de las variables; sin embargo, se puede observar claramente que los datos no siguen un patrón claro y se encuentran en su mayoría centrados en cero, lo que sugiere que los modelos podrían ser válidos. 
+
+Normalidad de residuos
+```{r}
+# Comprobar la normalidad de los residuos (Q-Q plot)
+par(mfrow = c(2, 2))
+qqnorm(fit$residuals[,1], main = "Q-Q Plot Residuos Y1")
+qqline(fit$residuals[,1])
+qqnorm(fit$residuals[,2], main = "Q-Q Plot Residuos Y2")
+qqline(fit$residuals[,2])
+qqnorm(fit$residuals[,3], main = "Q-Q Plot Residuos Y3")
+qqline(fit$residuals[,3])
+qqnorm(fit$residuals[,4], main = "Q-Q Plot Residuos Y4")
+qqline(fit$residuals[,4])
+par(mfrow = c(2, 2))
+qqnorm(fit$residuals[,5], main = "Q-Q Plot Residuos Y5")
+qqline(fit$residuals[,5])
+qqnorm(fit$residuals[,6], main = "Q-Q Plot Residuos Y6")
+qqline(fit$residuals[,6])
+qqnorm(fit$residuals[,7], main = "Q-Q Plot Residuos Y7")
+qqline(fit$residuals[,7])
+qqnorm(fit$residuals[,8], main = "Q-Q Plot Residuos Y8")
+qqline(fit$residuals[,8])
+```
+
+```{r}
+hist(fit$residuals[,1],freq=FALSE, ylim = c(0,0.5), main = "Histograma del residuo Y1")
+lines(density(fit$residuals[,1]),col="red")
+curve(dnorm(x,mean=mean(fit$residuals[,1]),sd=sd(fit$residuals[,1])), from=min(fit$residuals[,1]), to=max(fit$residuals[,1]), add=TRUE, col="blue",lwd=2)
+```
+```{r}
+hist(fit$residuals[,2],freq=FALSE, ylim = c(0,0.7), main = "Histograma del residuo Y2")
+lines(density(fit$residuals[,2]),col="red")
+curve(dnorm(x,mean=mean(fit$residuals[,2]),sd=sd(fit$residuals[,2])), from=min(fit$residuals[,2]), to=max(fit$residuals[,2]), add=TRUE, col="blue",lwd=2)
+```
+
+```{r}
+hist(fit$residuals[,3],freq=FALSE, ylim = c(0,0.7), main = "Histograma del residuo Y3")
+lines(density(fit$residuals[,3]),col="red")
+curve(dnorm(x,mean=mean(fit$residuals[,3]),sd=sd(fit$residuals[,3])), from=min(fit$residuals[,3]), to=max(fit$residuals[,3]), add=TRUE, col="blue",lwd=2)
+```
+
+```{r}
+hist(fit$residuals[,4],freq=FALSE, ylim = c(0,0.7), main = "Histograma del residuo Y4")
+lines(density(fit$residuals[,4]),col="red")
+curve(dnorm(x,mean=mean(fit$residuals[,4]),sd=sd(fit$residuals[,4])), from=min(fit$residuals[,4]), to=max(fit$residuals[,4]), add=TRUE, col="blue",lwd=2)
+```
+
+```{r}
+hist(fit$residuals[,5],freq=FALSE, ylim = c(0,0.7), main = "Histograma del residuo Y5")
+lines(density(fit$residuals[,5]),col="red")
+curve(dnorm(x,mean=mean(fit$residuals[,5]),sd=sd(fit$residuals[,5])), from=min(fit$residuals[,5]), to=max(fit$residuals[,5]), add=TRUE, col="blue",lwd=2)
+```
+
+```{r}
+hist(fit$residuals[,6],freq=FALSE, ylim = c(0,0.6), main = "Histograma del residuo Y6")
+lines(density(fit$residuals[,6]),col="red")
+curve(dnorm(x,mean=mean(fit$residuals[,6]),sd=sd(fit$residuals[,6])), from=min(fit$residuals[,6]), to=max(fit$residuals[,6]), add=TRUE, col="blue",lwd=2)
+```
+
+```{r}
+hist(fit$residuals[,7],freq=FALSE, ylim = c(0,0.6), main = "Histograma del residuo Y7")
+lines(density(fit$residuals[,7]),col="red")
+curve(dnorm(x,mean=mean(fit$residuals[,7]),sd=sd(fit$residuals[,7])), from=min(fit$residuals[,7]), to=max(fit$residuals[,7]), add=TRUE, col="blue",lwd=2)
+```
+
+Estos histogramas de densidad ayudan a observar el comportamiento de los residuos ara decidir finalmente si tienen una distribución normal o no. Como se puede observar, la distribución normal teórica se ajusta bastante bien con casi todos los residuos de los modelos
+
+```{r}
+hist(fit$residuals[,8],freq=FALSE, ylim = c(0,0.7), main = "Histograma del residuo Y8")
+lines(density(fit$residuals[,8]),col="red")
+curve(dnorm(x,mean=mean(fit$residuals[,8]),sd=sd(fit$residuals[,8])), from=min(fit$residuals[,8]), to=max(fit$residuals[,2]), add=TRUE, col="blue",lwd=2)
+```
+
+
+En las gráficas QQPlot los residuos de todas las variables dependientes aparentan seguir adecuadamente la recta de normalidad, de repente hay algún residuo que no se encuentra alejado de la  recta de normalidad; sin embargo, para más seguridad en la conclusión de la normalidad se relizarán pruebas de Anderson Darling para variables individuales, así como una prueba de normalidad multivariada.
+
+
+Normalidad Multivariada
+
+```{r}
+library(MVN)
+# Prueba de normalidad multivariante usando Mardia
+mardia_test <- mvn(data = residuals_multivariate, mvnTest = "mardia")
+print(mardia_test)
+```
+
+Se tiene evidencia estadística para rechazar la hipótesis nula en todas y cada una de las variables, por lo que se considera que la distribución de los residuos tanto en lo univariado, como en lo multivariado no es normal.
+
+
+Análisis de relación entre variables dependientes
+```{r}
+# Matriz de varianzas y covarianzas de las variables dependientes
+cov_matrix <- cov(cbind(Y1, Y2, Y3, Y4, Y5, Y6, Y7, Y8))
+cov_matrix
+```
+
+En esta matriz de varianza y covarianza se puede observar que con la transformación de los datos la varianza de cada variable es muy cercana a 1, mientras que la covarianza entre variables es relativamente baja, aunque, para el rango de las variables es una covarianza algo elevada, lo que puede indicar una fuerte relación entre las variables, es decir, una posible dependencia.
+
+```{r}
+# Matriz de correlación de las variables dependientes
+cor_matrix <- cor(cbind(Y1, Y2, Y3, Y4, Y5, Y6, Y7, Y8))
+cor_matrix
+```
+
+```{r}
+# Análisis de la multicolinealidad entre variables dependientes
+det(cor_matrix)
+```
+
+Como el determinante de la matriz de correlación es algo cercano a 0 y menor a 0.01, se puede concluir que es probable que exista cierto grado de multicolinealidad entre las variables de los modelos.
+
+```{r}
+# Análisis de correlación canónica (CCA)
+cca <- cancor(cbind(Y1, Y2, Y3, Y4, Y5, Y6, Y7, Y8), cbind(X1, X2, X3, X4))
+cca$cor  # Correlaciones canónicas
+```
+
+En este caso se tiene un valor máximo de 0.759 de correlación canónica, lo que indica una relación lineal aceptable entre la combinación lineal; sin embargo, a medida que va realizando más combinaciones lineales la correlación canónica va disminuyendo considerablemente, lo que indica que la relación lineal entre las variables se va perdiendo.
